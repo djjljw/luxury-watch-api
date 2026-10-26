@@ -237,11 +237,65 @@ Semua 12 pengujian Feature & Unit akan dieksekusi menggunakan in-memory database
 
 ---
 
-## ☁️ Panduan Deploy ke Cloud (Railway, Render, Fly.io, Heroku)
+## ☁️ Panduan Deploy ke Cloud (Clever Cloud, Railway, Render, Docker)
 
-Proyek ini telah dilengkapi konfigurasi deployment siap pakai:
+Proyek ini telah dilengkapi konfigurasi deployment siap pakai, khususnya **Clever Cloud**:
 
-### Pilihan 1: Deploy via Railway / Render
+### 🌟 Pilihan 1: Deploy ke Clever Cloud (Rekomendasi)
+
+Proyek ini sudah dikonfigurasi khusus untuk **Clever Cloud** dengan:
+- Script otomatisasi [`clevercloud/post_build.sh`](clevercloud/post_build.sh) (otomatis migrate, seed, dan cache saat build).
+- Konfigurasi [`config/database.php`](config/database.php) yang langsung mengenali variabel bawaan add-on MySQL Clever Cloud (`MYSQL_ADDON_HOST`, `MYSQL_ADDON_DB`, `MYSQL_ADDON_USER`, dll).
+
+#### Cara A: Melalui Dashboard Clever Cloud Web Console (Paling Mudah)
+1. Buka [Clever Cloud Console](https://console.clever-cloud.com/).
+2. Buat aplikasi PHP:
+   * Klik **"Create..."** > **"an application"** > pilih **PHP**.
+   * Hubungkan repositori GitHub/GitLab Anda atau push git langsung.
+3. Buat Add-on MySQL:
+   * Klik **"Create..."** > **"an add-on"** > pilih **MySQL** (pilih paket Dev / Free).
+   * Beri nama misalnya `luxury-watch-mysql`.
+   * Pada halaman berikutnya, **Link (hubungkan)** add-on ini ke aplikasi PHP yang baru saja Anda buat. *(Variabel database otomatis terhubung!)*
+4. Konfigurasi **Environment Variables** aplikasi di Clever Cloud:
+   * `CC_WEBROOT` = `/public`
+   * `CC_PHP_VERSION` = `8.3`
+   * `CC_POST_BUILD_HOOK` = `./clevercloud/post_build.sh`
+   * `APP_KEY` = `base64:SkKZjOJ5x2B4S5tlRX0oZ72CbGxfEJiHTCVf+7+u5YM=` *(atau generate via `php artisan key:generate --show`)*
+   * `APP_ENV` = `production`
+   * `APP_DEBUG` = `false`
+   * `APP_URL` = `https://<app-id>.cleverapps.io`
+5. Jalankan deploy! Aplikasi akan live dengan dokumentasi di `https://<domain-clever>/docs/api`.
+
+#### Cara B: Melalui Terminal (`clever-tools` CLI)
+Clever Tools CLI sudah terinstall di sistem Anda:
+```bash
+# 1. Login ke akun Clever Cloud
+clever login
+
+# 2. Inisialisasi aplikasi PHP
+clever create --type php luxury-watch-api
+
+# 3. Buat add-on MySQL dan hubungkan langsung
+clever addon create mysql-addon --plan dev luxury-watch-mysql --link luxury-watch-api
+
+# 4. Set variabel environment penting
+clever env set CC_WEBROOT /public
+clever env set CC_PHP_VERSION 8.3
+clever env set CC_POST_BUILD_HOOK ./clevercloud/post_build.sh
+clever env set APP_KEY base64:SkKZjOJ5x2B4S5tlRX0oZ72CbGxfEJiHTCVf+7+u5YM=
+clever env set APP_ENV production
+clever env set APP_DEBUG false
+
+# 5. Deploy aplikasi langsung via git
+clever deploy
+
+# 6. Buka aplikasi di browser
+clever open
+```
+
+---
+
+### Pilihan 2: Deploy via Railway / Render
 1. Push repositori ke GitHub / GitLab.
 2. Buat layanan baru di **Railway** atau **Render**.
 3. Tambahkan MySQL Database service di dashboard platform.
