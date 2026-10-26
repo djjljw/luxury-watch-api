@@ -1,0 +1,442 @@
+{
+    "openapi": "3.1.2",
+    "info": {
+        "title": "Luxury Watch Store API Documentation",
+        "version": "1.0.0",
+        "description": "Layanan RESTful API Toko Jam Mewah (Luxury Watch Store) berbasis Laravel 12 & MySQL untuk mengelola katalog jam tangan eksklusif (Rolex, Patek Philippe, Audemars Piguet, dll). Dilengkapi validasi ketat, respons standar amplop JSON (message & data), dan dokumentasi interaktif."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api"
+        }
+    ],
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
+    "paths": {
+        "/jam-tangan": {
+            "get": {
+                "operationId": "jam-tangan.index",
+                "description": "Endpoint untuk mendapatkan daftar seluruh koleksi jam tangan mewah yang tersedia di katalog.\nMendukung filter opsional berdasarkan brand, tipe_gerakan, status, dan pencarian kata kunci.",
+                "summary": "Mengambil Seluruh Koleksi Jam Mewah",
+                "tags": [
+                    "Koleksi Jam Mewah",
+                    "Watch"
+                ],
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tipe_gerakan",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "const": 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "jam-tangan.store",
+                "description": "Menambahkan data jam tangan mewah baru ke dalam katalog setelah lolos validasi request yang ketat.",
+                "summary": "Menambahkan Jam Mewah Baru",
+                "tags": [
+                    "Koleksi Jam Mewah",
+                    "Watch"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWatchRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "const": 201
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/jam-tangan/{id}": {
+            "get": {
+                "operationId": "jam-tangan.show",
+                "description": "Mendapatkan informasi lengkap satu item jam tangan mewah berdasarkan ID uniknya.",
+                "summary": "Mengambil Detail Jam Mewah",
+                "tags": [
+                    "Koleksi Jam Mewah",
+                    "Watch"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID jam tangan mewah",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "integer"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "const": 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "jam-tangan.update",
+                "description": "Memperbarui informasi atribut jam tangan mewah yang telah tersimpan di basis data (mendukung PUT maupun PATCH).",
+                "summary": "Memperbarui Data Jam Mewah",
+                "tags": [
+                    "Koleksi Jam Mewah",
+                    "Watch"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID jam tangan mewah",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "integer"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWatchRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "const": 200
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "jam-tangan.destroy",
+                "description": "Menghapus data jam tangan mewah dari katalog basis data secara permanen berdasarkan ID.",
+                "summary": "Menghapus Data Jam Mewah",
+                "tags": [
+                    "Koleksi Jam Mewah",
+                    "Watch"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID jam tangan mewah",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "integer"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "integer",
+                                    "const": 200
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKey": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization"
+            }
+        },
+        "schemas": {
+            "StoreWatchRequest": {
+                "type": "object",
+                "properties": {
+                    "nama": {
+                        "type": "string",
+                        "description": "Nama model jam mewah.",
+                        "examples": [
+                            "Rolex Submariner Date"
+                        ],
+                        "maxLength": 255
+                    },
+                    "brand": {
+                        "type": "string",
+                        "description": "Brand atau produsen jam mewah.",
+                        "examples": [
+                            "Rolex"
+                        ],
+                        "maxLength": 100
+                    },
+                    "harga": {
+                        "type": "integer",
+                        "description": "Harga jam mewah dalam Rupiah (IDR).",
+                        "examples": [
+                            250000000
+                        ],
+                        "minimum": 1
+                    },
+                    "tahun_rilis": {
+                        "type": "integer",
+                        "description": "Tahun pembuatan atau rilis jam.",
+                        "examples": [
+                            2023
+                        ],
+                        "minimum": 1800,
+                        "maximum": 2027
+                    },
+                    "tipe_gerakan": {
+                        "type": "string",
+                        "description": "Tipe pergerakan (movement) jam tangan.",
+                        "enum": [
+                            "Automatic",
+                            "Manual",
+                            "Quartz"
+                        ],
+                        "examples": [
+                            "Automatic"
+                        ]
+                    },
+                    "material": {
+                        "type": "string",
+                        "description": "Material case dan strap jam tangan mewah.",
+                        "examples": [
+                            "Oystersteel"
+                        ],
+                        "maxLength": 100
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status ketersediaan jam tangan (tersedia / terjual).",
+                        "enum": [
+                            "tersedia",
+                            "terjual"
+                        ],
+                        "examples": [
+                            "tersedia"
+                        ]
+                    },
+                    "foto": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "URL tautan foto jam tangan mewah.",
+                        "examples": [
+                            "https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+                        ],
+                        "maxLength": 500
+                    }
+                },
+                "required": [
+                    "nama",
+                    "brand",
+                    "harga",
+                    "tahun_rilis",
+                    "tipe_gerakan",
+                    "material",
+                    "status",
+                    "foto"
+                ],
+                "title": "StoreWatchRequest"
+            },
+            "UpdateWatchRequest": {
+                "type": "object",
+                "properties": {
+                    "nama": {
+                        "type": "string",
+                        "description": "Nama model jam mewah.",
+                        "examples": [
+                            "Rolex Submariner Date"
+                        ],
+                        "maxLength": 255
+                    },
+                    "brand": {
+                        "type": "string",
+                        "description": "Brand atau produsen jam mewah.",
+                        "examples": [
+                            "Rolex"
+                        ],
+                        "maxLength": 100
+                    },
+                    "harga": {
+                        "type": "integer",
+                        "description": "Harga jam mewah dalam Rupiah (IDR).",
+                        "examples": [
+                            265000000
+                        ],
+                        "minimum": 1
+                    },
+                    "tahun_rilis": {
+                        "type": "integer",
+                        "description": "Tahun pembuatan atau rilis jam.",
+                        "examples": [
+                            2024
+                        ],
+                        "minimum": 1800,
+                        "maximum": 2027
+                    },
+                    "tipe_gerakan": {
+                        "type": "string",
+                        "description": "Tipe pergerakan (movement) jam tangan.",
+                        "enum": [
+                            "Automatic",
+                            "Manual",
+                            "Quartz"
+                        ],
+                        "examples": [
+                            "Automatic"
+                        ]
+                    },
+                    "material": {
+                        "type": "string",
+                        "description": "Material case dan strap jam tangan mewah.",
+                        "examples": [
+                            "Oystersteel"
+                        ],
+                        "maxLength": 100
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status ketersediaan jam tangan (tersedia / terjual).",
+                        "enum": [
+                            "tersedia",
+                            "terjual"
+                        ],
+                        "examples": [
+                            "terjual"
+                        ]
+                    },
+                    "foto": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "URL tautan foto jam tangan mewah.",
+                        "examples": [
+                            "https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+                        ],
+                        "maxLength": 500
+                    }
+                },
+                "title": "UpdateWatchRequest"
+            }
+        },
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

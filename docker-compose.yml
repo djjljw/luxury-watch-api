@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: luxury_watch_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: "Luxury Watch API"
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: "http://localhost:8000"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: luxury_watches_db
+      DB_USERNAME: luxury_user
+      DB_PASSWORD: luxury_password
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: luxury_watch_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: luxury_watches_db
+      MYSQL_USER: luxury_user
+      MYSQL_PASSWORD: luxury_password
+      MYSQL_ROOT_PASSWORD: root_secret_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
